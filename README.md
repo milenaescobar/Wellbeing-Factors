@@ -20,10 +20,7 @@ The data README file provides a detailed description of the datasets used, inclu
 ## Code:
 Scripts for data preprocessing, analysis, and models can be found in the /code folder.
 The analysis.R script is the main file that runs the full analysis.
-Logs:
 
-Check the /logs folder for logs related to data preprocessing, model results, and errors encountered during the analysis.
-Documentation:
 
 ## Data Sources
 World Happiness Report: Provides the Life Ladder index, a measure of subjective well-being across countries.
