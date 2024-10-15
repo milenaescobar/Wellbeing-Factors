@@ -1,0 +1,76 @@
+*YRF
+
+clear all
+********* Manejo de base de datos ********
+{
+* Cargar la base de datos 
+use "C:\Users\m_ile\OneDrive\Documentos\happiness_base_2.dta", clear
+use "C:\Users\m_ile\OneDrive\Documentos\happiness_base.dta", clear
+
+* Establecer el panel
+encode code, gen(code_num)
+xtset code_num year
+
+* Panel variable: code_num (unbalanced)
+* Time variable: year, 2005 to 2019, but with gaps
+* Delta: 1 unit
+xtdescribe
+
+* Etiquetar las variables para facilitar la interpretación
+label variable lifeladder "Índice de Felicidad Mundial"
+label variable gdpwh "PIB per cápita (log)"
+label variable lgbt "Índice de Aceptación LGBT+"
+label variable peace "Índice de Paz Global"
+label variable health "Inversión en salud (% del PIB)"
+label variable education "Años promedio de educación"
+label variable unemployment "Tasa de desempleo"
+label variable inflation "Tasa de inflación"
+label variable gini "Coeficiente de Gini"
+label variable gender "Índice de Desigualdad de Género"
+
+* Generar variable categórica para grupos de ingresos
+label define income_labels 1 "Bajos" 2 "Medios-bajos" 3 "Medios-altos" 4 "Altos"
+label values ingresos income_labels
+}
+
+* Eliminar observaciones vacías
+drop if missing(lifeladder, gdpwh, lgbt, peace, health, education, unemployment, inflation, gender)
+
+*regresión base
+xtreg lifeladder lgbt if ingresos ==1, fe 
+xtreg lifeladder lgbt if ingresos ==2, fe 
+xtreg lifeladder lgbt if ingresos ==3, fe 
+xtreg lifeladder lgbt if ingresos ==4, fe 
+
+xtreg lifeladder lgbt gdpwh if ingresos ==1, fe 
+xtreg lifeladder lgbt gdpwh if ingresos ==2, fe 
+xtreg lifeladder lgbt gdpwh if ingresos ==3, fe 
+xtreg lifeladder lgbt gdpwh if ingresos ==4, fe 
+
+xtreg lifeladder lgbt gdpwh peace if ingresos ==1, fe 
+xtreg lifeladder lgbt gdpwh peace if ingresos ==2, fe 
+xtreg lifeladder lgbt gdpwh peace if ingresos ==3, fe 
+xtreg lifeladder lgbt gdpwh peace if ingresos ==4, fe 
+
+xtreg lifeladder lgbt gdpwh peace unemployment if ingresos ==1, fe 
+xtreg lifeladder lgbt gdpwh peace unemployment if ingresos ==2, fe 
+xtreg lifeladder lgbt gdpwh peace unemployment if ingresos ==3, fe 
+xtreg lifeladder lgbt gdpwh peace unemployment if ingresos ==4, fe 
+
+xtreg lifeladder lgbt gdpwh peace unemployment gender if ingresos ==1, fe 
+xtreg lifeladder lgbt gdpwh peace unemployment gender if ingresos ==2, fe 
+xtreg lifeladder lgbt gdpwh peace unemployment gender if ingresos ==3, fe 
+xtreg lifeladder lgbt gdpwh peace unemployment gender if ingresos ==4, fe 
+
+xtreg lifeladder lgbt gdpwh peace unemployment gender social if ingresos ==1, fe 
+xtreg lifeladder lgbt gdpwh peace unemployment gender social if ingresos ==2, fe 
+xtreg lifeladder lgbt gdpwh peace unemployment gender social if ingresos ==3, fe 
+xtreg lifeladder lgbt gdpwh peace unemployment gender social if ingresos ==4, fe 
+
+
+
+**Se decide hacer clusterización
+
+xtreg lifeladder lgbt  peace unemployment gender c.gdpwh##c.social, vce(cluster code_num) fe  
+
+
